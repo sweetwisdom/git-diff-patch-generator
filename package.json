@@ -1,5 +1,6 @@
 {
   "name": "git-diff-patch-generator",
+  "icon": "src/icon.png",
   "displayName": "Git Diff Patch Generator",
   "description": "在对比视图右键菜单生成 patch 文件",
   "version": "0.0.1",
