@@ -35,6 +35,11 @@
         {
           "command": "gitDiffPatchGenerator.generateFullPatch"
         }
+      ],
+      "timeline/item/context": [
+        {
+          "command": "gitDiffPatchGenerator.generateFullPatch"
+        }
       ]
     },
     "configuration": {

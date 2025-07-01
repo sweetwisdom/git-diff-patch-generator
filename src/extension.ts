@@ -79,18 +79,26 @@ export function activate(context: vscode.ExtensionContext) {
     });
   });
 
-  // 新命令：输入 commit id 生成完整 patch
-  const disposable2 = vscode.commands.registerCommand('gitDiffPatchGenerator.generateFullPatch', async () => {
+  // 新命令：输入 commit id 生成完整 patch（支持 timeline 右键自动带入 commit id）
+  const disposable2 = vscode.commands.registerCommand('gitDiffPatchGenerator.generateFullPatch', async (...args: any[]) => {
     const workspaceFolders = vscode.workspace.workspaceFolders;
     if (!workspaceFolders || workspaceFolders.length === 0) {
       vscode.window.showErrorMessage('未打开任何工作区。');
       return;
     }
     const workspaceFolder = workspaceFolders[0];
-    const commitId = await vscode.window.showInputBox({
-      prompt: '请输入 commit id（如 24a2f307）',
-      validateInput: (v) => v && v.length >= 7 ? undefined : '请输入至少7位 commit id',
-    });
+    let commitId: string | undefined;
+    // timeline 右键菜单会传入 item 参数
+    if (args && args[0] && args[0].id) {
+      commitId = args[0].id;
+      console.log('从 timeline item 获取 commit id:', commitId);
+    }
+    if (!commitId) {
+      commitId = await vscode.window.showInputBox({
+        prompt: '请输入 commit id（如 24a2f307）',
+        validateInput: (v) => v && v.length >= 7 ? undefined : '请输入至少7位 commit id',
+      });
+    }
     if (!commitId) {
       return;
     }
