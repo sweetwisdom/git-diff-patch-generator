@@ -1,0 +1,45 @@
+{
+  "name": "git-diff-patch-generator",
+  "displayName": "Git Diff Patch Generator",
+  "description": "在对比视图右键菜单生成 patch 文件",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": ">=1.70.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:gitDiffPatchGenerator.generatePatch"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "gitDiffPatchGenerator.generatePatch",
+        "title": "Git Patch: 从对比视图生成 Patch"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "gitDiffPatchGenerator.generatePatch",
+          "when": "resourceScheme == 'git' && isInDiffEditor"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p .",
+    "watch": "tsc -watch -p .",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.8",
+    "@types/vscode": "^1.70.0",
+    "eslint": "^8.0.0",
+    "typescript": "^4.7.0"
+  }
+}
