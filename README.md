@@ -21,3 +21,5 @@
 ## 依赖
 - 需要本地已安装 Git。
 - 仅支持 VS Code 1.70 及以上版本。 
+
+#   npm run compile

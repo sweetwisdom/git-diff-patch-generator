@@ -18,6 +18,10 @@
       {
         "command": "gitDiffPatchGenerator.generatePatch",
         "title": "Git Patch: 从对比视图生成 Patch"
+      },
+      {
+        "command": "gitDiffPatchGenerator.generateFullPatch",
+        "title": "Git Patch: 输入 commit id 生成完整 Patch"
       }
     ],
     "menus": {
@@ -26,7 +30,23 @@
           "command": "gitDiffPatchGenerator.generatePatch",
           "when": "resourceScheme == 'git' && isInDiffEditor"
         }
+      ],
+      "commandPalette": [
+        {
+          "command": "gitDiffPatchGenerator.generateFullPatch"
+        }
       ]
+    },
+    "configuration": {
+      "type": "object",
+      "title": "Git Diff Patch Generator 配置",
+      "properties": {
+        "gitDiffPatchGenerator.patchOutputDir": {
+          "type": "string",
+          "default": "patch",
+          "description": "patch 文件输出目录（相对路径或绝对路径）"
+        }
+      }
     }
   },
   "scripts": {
