@@ -21,7 +21,7 @@
       },
       {
         "command": "gitDiffPatchGenerator.generateFullPatch",
-        "title": "Git Patch: 输入 commit id 生成完整 Patch"
+        "title": "Git Patch:生成完整 Patch"
       }
     ],
     "menus": {
