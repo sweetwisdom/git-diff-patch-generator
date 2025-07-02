@@ -4,6 +4,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import { exec } from 'child_process';
+import { getI18nText } from './i18n';
 
 function getPatchOutputDir(workspaceFolder: vscode.WorkspaceFolder): string {
   // 读取用户配置
@@ -22,21 +23,21 @@ function getPatchOutputDir(workspaceFolder: vscode.WorkspaceFolder): string {
 export function activate(context: vscode.ExtensionContext) {
   // 调试信息
   console.log('插件已激活');
-  // vscode.window.showInformationMessage('Git Diff Patch Generator 插件已激活');
+  // vscode.window.showInformationMessage(getI18nText('pluginActivated'));
 
   // 右键菜单命令：从 diff 视图生成 patch
   const disposable = vscode.commands.registerCommand('gitDiffPatchGenerator.generatePatch', async () => {
     const tab = vscode.window.tabGroups.activeTabGroup.activeTab;
     console.log('当前tab信息:', tab);
     if (!tab || !tab.label) {
-      vscode.window.showErrorMessage('未能获取当前标签信息。');
+      vscode.window.showErrorMessage(getI18nText('noTab'));
       return;
     }
     // 解析标签
     const label = tab.label;
     const match = label.match(/\((\w{7,40})\)\s*↔\s*.*\((\w{7,40})\)/);
     if (!match) {
-      vscode.window.showErrorMessage('未能从标签解析出 commit 哈希。');
+      vscode.window.showErrorMessage(getI18nText('parseCommitFail'));
       return;
     }
     const hash1 = match[1];
@@ -51,12 +52,12 @@ export function activate(context: vscode.ExtensionContext) {
     } else if ((tab as any).resource) {
       filePath = (tab as any).resource.fsPath;
     } else {
-      vscode.window.showErrorMessage('未能获取对比文件路径。');
+      vscode.window.showErrorMessage(getI18nText('getFilePathFail'));
       return;
     }
     const workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(filePath));
     if (!workspaceFolder) {
-      vscode.window.showErrorMessage('未能定位到工作区。');
+      vscode.window.showErrorMessage(getI18nText('getWorkspaceFail'));
       return;
     }
     const relPath = path.relative(workspaceFolder.uri.fsPath, filePath);
@@ -73,7 +74,7 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.window.showErrorMessage('生成 patch 失败: ' + err.message);
         console.error('生成 patch 失败:', err);
       } else {
-        vscode.window.showInformationMessage(`Patch 文件已生成: ${patchFileName}`);
+        vscode.window.showInformationMessage(getI18nText('patchGenerated', patchFileName));
         vscode.commands.executeCommand('revealFileInOS', vscode.Uri.file(patchFilePath));
       }
     });
@@ -84,7 +85,7 @@ export function activate(context: vscode.ExtensionContext) {
 const disposable2 = vscode.commands.registerCommand('gitDiffPatchGenerator.generateFullPatch', async (item?: any, ...args: any[]) => {
   const workspaceFolders = vscode.workspace.workspaceFolders;
   if (!workspaceFolders || workspaceFolders.length === 0) {
-    vscode.window.showErrorMessage('未打开任何工作区。');
+    vscode.window.showErrorMessage(getI18nText('noWorkspace'));
     return;
   }
   const workspaceFolder = workspaceFolders[0];
@@ -240,14 +241,14 @@ const disposable2 = vscode.commands.registerCommand('gitDiffPatchGenerator.gener
     }
 
     commitId = await vscode.window.showInputBox({
-      prompt: '请输入 commit id',
-      placeHolder: '例如: 24a2f307',
+      prompt: getI18nText('inputCommitId'),
+      placeHolder: getI18nText('inputCommitIdPlaceholder'),
       value: clipboardText,
       validateInput: (v) => {
-        if (!v) return '请输入 commit id';
+        if (!v) return getI18nText('inputCommitId');
         const trimmed = v.trim();
-        if (trimmed.length < 7) return '请输入至少7位 commit id';
-        if (!/^[a-f0-9]+$/i.test(trimmed)) return '请输入有效的 commit id';
+        if (trimmed.length < 7) return getI18nText('inputCommitIdShort');
+        if (!/^[a-f0-9]+$/i.test(trimmed)) return getI18nText('inputCommitIdInvalid');
         return undefined;
       },
     });
@@ -282,20 +283,20 @@ const disposable2 = vscode.commands.registerCommand('gitDiffPatchGenerator.gener
   }, (err: Error | null, stdout: string, stderr: string) => {
     if (err) {
       console.error('生成 patch 失败:', err);
-      let errorMsg = '生成 patch 失败';
+      let errorMsg = getI18nText('patchFailed');
       if (stderr.includes('unknown revision') || stderr.includes('bad revision')) {
-        errorMsg += ': commit 不存在';
+        errorMsg += ': ' + getI18nText('commitNotExist');
       } else if (stderr.includes('not a git repository')) {
-        errorMsg += ': 不是 Git 仓库';
+        errorMsg += ': ' + getI18nText('notGitRepo');
       } else {
         errorMsg += ': ' + err.message;
       }
       vscode.window.showErrorMessage(errorMsg);
     } else if (!stdout.trim()) {
-      vscode.window.showErrorMessage('生成的 patch 为空，请检查 commit id');
+      vscode.window.showErrorMessage(getI18nText('patchEmpty'));
     } else {
       require('fs').writeFileSync(patchFilePath, stdout, 'utf8');
-      vscode.window.showInformationMessage(`完整 Patch 文件已生成: ${patchFileName}`);
+      vscode.window.showInformationMessage(getI18nText('patchFullGenerated', patchFileName));
       vscode.commands.executeCommand('revealFileInOS', vscode.Uri.file(patchFilePath));
     }
   });

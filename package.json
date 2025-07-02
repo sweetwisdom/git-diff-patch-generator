@@ -1,9 +1,19 @@
 {
   "name": "git-diff-patch-generator",
   "icon": "src/icon.png",
+  "author": "sweetwisdom",
+  "homepage": "http://vue-helper.80fight.cn/",
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npm.taobao.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sweetwisdom/git-diff-patch-generator.git"
+  },
   "displayName": "Git Diff Patch Generator",
   "description": "在对比视图右键菜单生成 patch 文件",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
     "vscode": ">=1.70.0"
   },
@@ -14,6 +24,12 @@
     "onCommand:gitDiffPatchGenerator.generatePatch"
   ],
   "main": "./out/extension.js",
+  "keywords": [
+    "git",
+    "cursor",
+    "git patch",
+    "vscode"
+  ],
   "contributes": {
     "commands": [
       {
